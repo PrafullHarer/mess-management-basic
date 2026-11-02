@@ -1,0 +1,7 @@
+{
+  "version": 2,
+  "cleanUrls": true,
+  "buildCommand": "echo 'Static site ready'",
+  "outputDirectory": "."
+}
+

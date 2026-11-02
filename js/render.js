@@ -44,44 +44,53 @@ function renderDashboard() {
     <div class="summary-card"><div class="label">Non-Veg</div><div class="value" style="color:var(--orange)">${nonVegCount}</div></div>
   </div>`;
 
-    // ===== MEAL SLOT COUNTS =====
-    h += `<div class="insights-section">
-        <div class="section-title">🍽️ Meal Slot Distribution</div>
-        <div class="summary-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:16px;">
-            <div class="summary-card"><div class="label">Eating in Evening</div><div class="value" style="color:#7c3aed">${eveningCount}</div></div>
-            <div class="summary-card"><div class="label">Eating in Afternoon</div><div class="value" style="color:#0ea5e9">${afternoonCount}</div></div>
-        </div>`;
+    // ===== TWO-COLUMN DESKTOP WRAPPER =====
+    h += `<div class="dashboard-columns">
+        <div class="dashboard-col-main">
+            <!-- MEAL SLOT COUNTS -->
+            <div class="insights-section">
+                <div class="section-title">🍽️ Meal Slot Distribution</div>
+                <div class="summary-grid" style="grid-template-columns: 1fr 1fr; margin-bottom:16px;">
+                    <div class="summary-card"><div class="label">Eating in Evening</div><div class="value" style="color:#7c3aed">${eveningCount}</div></div>
+                    <div class="summary-card"><div class="label">Eating in Afternoon</div><div class="value" style="color:#0ea5e9">${afternoonCount}</div></div>
+                </div>
+            </div>`;
 
-    // ===== PLAN BREAKDOWN =====
     if (planList.length > 0) {
-        h += `<div class="section-title">📋 Students Per Plan</div>
-        <div style="background:var(--card); border-radius:10px; padding:12px; margin-bottom:16px;">`;
+        h += `<div class="insights-section">
+            <div class="section-title">📋 Students Per Plan</div>
+            <div style="background:var(--card); border-radius:12px; padding:16px; margin-bottom:16px; border:1px solid var(--border);">`;
         planList.forEach(([plan, count]) => {
             const pct = all.length > 0 ? Math.round(count / all.length * 100) : 0;
-            h += `<div style="display:flex; align-items:center; gap:10px; padding:8px 0; border-bottom:1px solid var(--border);">
+            h += `<div style="display:flex; align-items:center; gap:12px; padding:9px 0; border-bottom:1px solid var(--border);">
                 <span style="flex:1; font-weight:500; font-size:14px; color:var(--text);">${escapeHtml(plan)}</span>
-                <div style="width:100px; height:8px; background:var(--border); border-radius:4px; overflow:hidden;">
+                <div style="width:120px; height:8px; background:var(--border); border-radius:4px; overflow:hidden;">
                     <div style="width:${pct}%; height:100%; background:var(--primary); border-radius:4px;"></div>
                 </div>
-                <span style="font-weight:700; font-size:14px; color:var(--text); min-width:30px; text-align:right;">${count}</span>
+                <span style="font-weight:700; font-size:14px; color:var(--text); min-width:35px; text-align:right;">${count}</span>
             </div>`;
         });
-        h += `</div>`;
+        h += `</div></div>`;
     }
+    h += `</div>`; // end dashboard-col-main
 
-    // ===== CUSTOM COLLECTION CALCULATOR =====
-    h += `<div class="section-title" onclick="document.getElementById('calcBody').style.display = document.getElementById('calcBody').style.display === 'none' ? 'block' : 'none'; this.querySelector('.arrow').textContent = document.getElementById('calcBody').style.display === 'none' ? '▸' : '▾';">
-            📅 Custom Collection Calculator <span class="arrow">▾</span>
-        </div>
-        <div id="calcBody" style="display:block; padding: 15px; background:var(--card); border-radius:12px; margin-bottom: 20px;">
-            <div style="display:flex; gap:10px; margin-bottom:12px;">
-                <div style="flex:1"><label style="font-size:12px; color:var(--text2); display:block; margin-bottom:4px;">Start Date</label><input type="date" id="calcStart" class="form-group input" style="width:100%; border:1px solid var(--border); padding:8px; border-radius:6px; background:var(--bg); color:var(--text);"></div>
-                <div style="flex:1"><label style="font-size:12px; color:var(--text2); display:block; margin-bottom:4px;">End Date</label><input type="date" id="calcEnd" class="form-group input" style="width:100%; border:1px solid var(--border); padding:8px; border-radius:6px; background:var(--bg); color:var(--text);"></div>
+    h += `<div class="dashboard-col-side">
+        <!-- CUSTOM COLLECTION CALCULATOR -->
+        <div class="insights-section">
+            <div class="section-title" onclick="document.getElementById('calcBody').style.display = document.getElementById('calcBody').style.display === 'none' ? 'block' : 'none'; this.querySelector('.arrow').textContent = document.getElementById('calcBody').style.display === 'none' ? '▸' : '▾';">
+                📅 Custom Collection Calculator <span class="arrow">▾</span>
             </div>
-            <button class="btn btn-primary" style="width:100%; padding:10px; font-weight:600;" onclick="runDateCalculator()">Calculate Total</button>
-            <div id="calcResult" style="margin-top:15px; padding-top:10px; border-top:1px solid var(--border); text-align:center; display:none;"></div>
+            <div id="calcBody" style="display:block; padding: 18px; background:var(--card); border-radius:12px; border:1px solid var(--border); margin-bottom: 20px;">
+                <div style="display:flex; gap:10px; margin-bottom:12px;">
+                    <div style="flex:1"><label style="font-size:12px; color:var(--text2); display:block; margin-bottom:4px;">Start Date</label><input type="date" id="calcStart" class="form-group input" style="width:100%; border:1px solid var(--border); padding:8px; border-radius:6px; background:var(--bg); color:var(--text);"></div>
+                    <div style="flex:1"><label style="font-size:12px; color:var(--text2); display:block; margin-bottom:4px;">End Date</label><input type="date" id="calcEnd" class="form-group input" style="width:100%; border:1px solid var(--border); padding:8px; border-radius:6px; background:var(--bg); color:var(--text);"></div>
+                </div>
+                <button class="btn btn-primary" style="width:100%; padding:10px; font-weight:600;" onclick="runDateCalculator()">Calculate Total</button>
+                <div id="calcResult" style="margin-top:15px; padding-top:10px; border-top:1px solid var(--border); text-align:center; display:none;"></div>
+            </div>
         </div>
-    </div>`;
+    </div>`; // end dashboard-col-side
+    h += `</div>`; // end dashboard-columns
 
     document.getElementById('tabDashboard').innerHTML = h;
 }
@@ -171,23 +180,24 @@ function renderStudents(type) {
             </div>`;
         }
 
-        headerHtml += `<div style="display:flex; gap:8px; margin-bottom:12px;">
-            <button id="${type}RenewAllBtn" class="btn ${renewalCount > 0 ? 'btn-primary' : 'btn-secondary'}" onclick="renewAllMessOver('${type}')" style="flex:1; display:flex; align-items:center; justify-content:center; gap:8px; padding:10px; font-size:14px; font-weight:600; ${renewalCount === 0 ? 'opacity:0.7;' : ''}">
-                <span style="font-size:18px">🔄</span> Renew All${renewalCount > 0 ? ' (' + renewalCount + ')' : ''}
-            </button>
-            <button class="btn btn-secondary" onclick="refreshData()" style="padding:10px 14px;" title="Refresh Data">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
-            </button>
-        </div>`;
-
-        headerHtml += `<div style="display:flex; gap:10px; margin-bottom:10px;">
-            <input class="search-bar" style="margin-bottom:0; flex:1;" type="text" placeholder="Search name, mobile, plan..." value="${isB ? boysSearch : girlsSearch}" oninput="onSearchInput('${type}', this.value)">
-            <select class="search-bar" style="margin-bottom:0; width:auto; padding: 0 10px;" onchange="${isB ? 'boysSort' : 'girlsSort'}=this.value;render()">
-                <option value="Newest" ${sortVal === 'Newest' ? 'selected' : ''}>Newest Joined</option>
-                <option value="Oldest" ${sortVal === 'Oldest' ? 'selected' : ''}>Oldest Joined</option>
-                <option value="A-Z" ${sortVal === 'A-Z' ? 'selected' : ''}>Name A-Z</option>
-                <option value="Z-A" ${sortVal === 'Z-A' ? 'selected' : ''}>Name Z-A</option>
-            </select>
+        headerHtml += `<div class="student-toolbar">
+            <div class="student-search-group">
+                <input class="search-bar" style="margin-bottom:0; flex:1;" type="text" placeholder="Search name, mobile, plan..." value="${isB ? boysSearch : girlsSearch}" oninput="onSearchInput('${type}', this.value)">
+                <select class="search-bar" style="margin-bottom:0; width:auto; padding: 0 10px;" onchange="${isB ? 'boysSort' : 'girlsSort'}=this.value;render()">
+                    <option value="Newest" ${sortVal === 'Newest' ? 'selected' : ''}>Newest Joined</option>
+                    <option value="Oldest" ${sortVal === 'Oldest' ? 'selected' : ''}>Oldest Joined</option>
+                    <option value="A-Z" ${sortVal === 'A-Z' ? 'selected' : ''}>Name A-Z</option>
+                    <option value="Z-A" ${sortVal === 'Z-A' ? 'selected' : ''}>Name Z-A</option>
+                </select>
+            </div>
+            <div class="student-actions-group">
+                <button id="${type}RenewAllBtn" class="btn ${renewalCount > 0 ? 'btn-primary' : 'btn-secondary'}" onclick="renewAllMessOver('${type}')" style="display:flex; align-items:center; justify-content:center; gap:8px; padding:10px 16px; font-size:14px; font-weight:600; ${renewalCount === 0 ? 'opacity:0.7;' : ''}">
+                    <span style="font-size:16px">🔄</span> Renew All${renewalCount > 0 ? ' (' + renewalCount + ')' : ''}
+                </button>
+                <button class="btn btn-secondary" onclick="refreshData()" style="padding:10px 14px;" title="Refresh Data">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 4 23 10 17 10"/><polyline points="1 20 1 14 7 14"/><path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"/></svg>
+                </button>
+            </div>
         </div>`;
 
         headerHtml += `<div class="filter-chips">`;
@@ -525,17 +535,22 @@ function renderDaily() {
     const monthSel = document.getElementById('monthSel');
     let selMonth = monthSel ? monthSel.value : defaultMonth;
 
-    let h = `<div class="monthly-summary">
-    <h3 onclick="dailySummaryCollapsed=!dailySummaryCollapsed;render()">Monthly Summary <span class="arrow">${dailySummaryCollapsed ? '▸' : '▾'}</span></h3>
-    <div class="ms-body" style="display: ${dailySummaryCollapsed ? 'none' : 'block'};">
-      <input type="month" class="month-sel" id="monthSel" value="${selMonth}" onchange="render()">`;
+    let h = `<div class="daily-desktop-layout">
+        <div class="daily-sidebar">
+            <div class="monthly-summary">
+                <h3 onclick="dailySummaryCollapsed=!dailySummaryCollapsed;render()">Monthly Summary <span class="arrow">${dailySummaryCollapsed ? '▸' : '▾'}</span></h3>
+                <div class="ms-body" style="display: ${dailySummaryCollapsed ? 'none' : 'block'};">
+                    <input type="month" class="month-sel" id="monthSel" value="${selMonth}" onchange="render()">`;
     const me = dailyEntries.filter(e => e.date.startsWith(selMonth));
     const mOnline = me.reduce((a, e) => a + safeInt(e.online), 0);
     const mCash = me.reduce((a, e) => a + safeInt(e.cash), 0);
-    h += `<div>Online: <strong>${fmtMoney(mOnline)}</strong></div>
-    <div>Cash: <strong>${fmtMoney(mCash)}</strong></div>
-    <div>Total: <strong>${fmtMoney(mOnline + mCash)}</strong></div>
-    </div></div>`;
+    h += `       <div>Online: <strong>${fmtMoney(mOnline)}</strong></div>
+                    <div>Cash: <strong>${fmtMoney(mCash)}</strong></div>
+                    <div>Total: <strong>${fmtMoney(mOnline + mCash)}</strong></div>
+                </div>
+            </div>
+        </div>
+        <div class="daily-content">`;
 
     const filteredDates = dates.filter(d => d.startsWith(selMonth));
 
@@ -565,5 +580,6 @@ function renderDaily() {
       <span></span>
     </div></div>`;
     });
+    h += `</div></div>`; // close daily-content and daily-desktop-layout
     document.getElementById('tabDaily').innerHTML = h;
 }

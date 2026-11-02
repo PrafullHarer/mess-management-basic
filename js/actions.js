@@ -1093,11 +1093,14 @@ function saveSettingsFromModal() {
 async function refreshData() {
     try {
         showLoading();
-        boys = await loadCollection('boys');
-        girls = await loadCollection('girls');
-        holidays = await loadCollection('holidays');
-        dailyEntries = await loadCollection('dailyEntries');
-        activityLogs = await loadCollection('logs');
+        const [b, g, h, d, l] = await Promise.all([
+            loadCollection('boys').catch(e => { console.warn('boys load error:', e); return []; }),
+            loadCollection('girls').catch(e => { console.warn('girls load error:', e); return []; }),
+            loadCollection('holidays').catch(e => { console.warn('holidays load error:', e); return []; }),
+            loadCollection('dailyEntries').catch(e => { console.warn('dailyEntries load error:', e); return []; }),
+            loadCollection('logs').catch(e => { console.warn('logs load error:', e); return []; })
+        ]);
+        boys = b; girls = g; holidays = h; dailyEntries = d; activityLogs = l;
         activityLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         hideLoading();
         render();
@@ -1111,18 +1114,24 @@ async function refreshData() {
 /* ===== INIT ===== */
 async function initApp() {
     try {
-        boys = await loadCollection('boys');
-        girls = await loadCollection('girls');
-        holidays = await loadCollection('holidays');
-        dailyEntries = await loadCollection('dailyEntries');
-        activityLogs = await loadCollection('logs');
+        showLoading();
+        const [b, g, h, d, l] = await Promise.all([
+            loadCollection('boys').catch(e => { console.warn('boys load error:', e); return []; }),
+            loadCollection('girls').catch(e => { console.warn('girls load error:', e); return []; }),
+            loadCollection('holidays').catch(e => { console.warn('holidays load error:', e); return []; }),
+            loadCollection('dailyEntries').catch(e => { console.warn('dailyEntries load error:', e); return []; }),
+            loadCollection('logs').catch(e => { console.warn('logs load error:', e); return []; })
+        ]);
+        boys = b; girls = g; holidays = h; dailyEntries = d; activityLogs = l;
         activityLogs.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
         hideLoading();
-        showToast(`Loaded: ${boys.length} boys, ${girls.length} girls`);
         render();
+        if (boys.length || girls.length) {
+            showToast(`Loaded: ${boys.length} boys, ${girls.length} girls`);
+        }
     } catch (err) {
         hideLoading();
-        showToast('Failed to load data: ' + err.message, 'error');
+        console.warn('initApp error:', err);
         render();
     }
 }

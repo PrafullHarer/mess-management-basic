@@ -104,17 +104,33 @@ Pending: ₹{pending}
 {upi_link}`;
 
 function getConfig() {
+    const creds = (typeof window !== 'undefined' && window.APP_CREDENTIALS) ? window.APP_CREDENTIALS : {};
     const defaults = {
-        messName: 'Sagar Mess',
-        upiId: 'gpay-12196572109@okbizaxis',
-        boysGroupLink: 'https://chat.whatsapp.com/JhszVYSiUyP7IHUrC1scwY?mode=gi_t',
-        girlsGroupLink: 'https://chat.whatsapp.com/IGRFOwVvwXf4e17WKmltUZ?mode=gi_t',
+        messName: creds.messName || 'Mess Manager',
+        upiId: creds.upiId || 'gpay-12196572109@okbizaxis',
+        boysGroupLink: creds.boysGroupLink || 'https://chat.whatsapp.com/JhszVYSiUyP7IHUrC1scwY?mode=gi_t',
+        girlsGroupLink: creds.girlsGroupLink || 'https://chat.whatsapp.com/IGRFOwVvwXf4e17WKmltUZ?mode=gi_t',
         welcomeTemplate: DEFAULT_WELCOME_TEMPLATE,
         paymentTemplate: DEFAULT_PAYMENT_TEMPLATE,
         renewalTemplate: DEFAULT_RENEWAL_TEMPLATE
     };
     try {
         const stored = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
+
+        // Automatically sync if credentials.js changes messName or client details
+        if (creds.messName && stored.configuredMessId !== creds.messName) {
+            stored.messName = creds.messName;
+            if (creds.upiId) stored.upiId = creds.upiId;
+            if (creds.boysGroupLink) stored.boysGroupLink = creds.boysGroupLink;
+            if (creds.girlsGroupLink) stored.girlsGroupLink = creds.girlsGroupLink;
+            stored.configuredMessId = creds.messName;
+            localStorage.setItem(CONFIG_KEY, JSON.stringify(stored));
+        }
+
+        if (stored.messName === 'Sagar Mess') {
+            stored.messName = creds.messName || 'Mess Manager';
+            localStorage.setItem(CONFIG_KEY, JSON.stringify(stored));
+        }
 
         const OLD_WELCOME_TEMPLATE = `Welcome to {mess_name} 🙏🍽️
 
